@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up - ShareHW.net{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card m-2">
+            <div class="card-header">
+                <h4 class="mb-0">Sign Up</h4>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('auth.signup') }}" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="mb-3">
+                        <label for="full_name" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="full_name" name="full_name" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="roll_number" class="form-label">College Roll Number (6 digits)</label>
+                        <input type="text" class="form-control" id="roll_number" name="roll_number" 
+                               pattern="[0-9]{6}" title="Please enter a 6-digit roll number" required>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="class_name" class="form-label">Class</label>
+                            <select class="form-select" id="class_name" name="class_name" required>
+                                <option value="">Select Class</option>
+                                <option value="XI">XI</option>
+                                <option value="XII">XII</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="section" class="form-label">Section</label>
+                            <select class="form-select" id="section" name="section" required>
+                                <option value="">Select Section</option>
+                                <option value="Science-A">Science-A</option>
+                                <option value="Science-B">Science-B</option>
+                                <option value="Arts-A">Arts-A</option>
+                                <option value="Arts-B">Arts-B</option>
+                                <option value="Commerce-A">Commerce-A</option>
+                                <option value="Commerce-B">Commerce-B</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label d-block">Select Role</label>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="role" id="role_student" 
+                                                   value="student" checked>
+                                            <label class="form-check-label" for="role_student">
+                                                <h5>Student</h5>
+                                                <small class="text-muted">View homework only - simple</small>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="role" id="role_captain" 
+                                                   value="captain">
+                                            <label class="form-check-label" for="role_captain">
+                                                <h5>Captain</h5>
+                                                <small class="text-muted">Upload, Manage homework & Approve admin students</small>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="role" id="role_admin_student" 
+                                                   value="admin-student">
+                                            <label class="form-check-label" for="role_admin_student">
+                                                <h5>Admin Student</h5>
+                                                <small class="text-muted">View & Upload homework</small>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="password_section" style="display: none;">
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   minlength="8">
+                            <small class="text-muted">At least 8 characters</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_card" class="form-label">Upload Student ID Card</label>
+                            <input type="file" class="form-control" id="id_card" name="id_card" 
+                                   accept=".jpg,.jpeg,.png">
+                            <small class="text-muted">Required for captain and admin student roles</small>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const roleInputs = document.querySelectorAll('input[name="role"]');
+    
+    function togglePasswordSection() {
+        const selectedRole = document.querySelector('input[name="role"]:checked').value;
+        const passwordSection = document.getElementById('password_section');
+        const passwordInput = document.getElementById('password');
+        const idCardInput = document.getElementById('id_card');
+        
+        if (selectedRole === 'captain' || selectedRole === 'admin-student') {
+            passwordSection.style.display = 'block';
+            passwordInput.required = true;
+            idCardInput.required = true;
+        } else {
+            passwordSection.style.display = 'none';
+            passwordInput.required = false;
+            idCardInput.required = false;
+        }
+    }
+    
+    togglePasswordSection();
+    
+    roleInputs.forEach(input => {
+        input.addEventListener('change', togglePasswordSection);
+    });
+});
+</script>
+{% endblock %}

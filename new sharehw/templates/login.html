@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Login - ShareHW.net{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Login</h4>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('auth.login') }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="mb-3">
+                        <label for="roll_number" class="form-label">College Roll Number</label>
+                        <input type="text" class="form-control" id="roll_number" name="roll_number" 
+                               pattern="[0-9]{6}" title="Please enter a 6-digit roll number" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password">
+                        <small class="text-muted">*Only required for Captain and Admin Student accounts</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="class_name" class="form-label">Class</label>
+                        <select class="form-select" id="class_name" name="class_name" required>
+                            <option value="">Select Class</option>
+                            <option value="XI">XI</option>
+                            <option value="XII">XII</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="section" class="form-label">Section</label>
+                        <select class="form-select" id="section" name="section" required>
+                            <option value="">Select Section</option>
+                            <option value="Science-A">Science-A</option>
+                            <option value="Science-B">Science-B</option>
+                            <option value="Arts-A">Arts-A</option>
+                            <option value="Arts-B">Arts-B</option>
+                            <option value="Commerce-A">Commerce-A</option>
+                            <option value="Commerce-B">Commerce-B</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                </form>
+                
+                <div class="mt-3 text-center">
+                    <p class="mb-0">Don't have an account? <a href="{{ url_for('auth.signup') }}">Sign Up</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

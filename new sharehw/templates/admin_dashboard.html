@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - ShareHW.net{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Admin Dashboard</h2>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4 class="mb-0">Pending Captain Approvals</h4>
+                </div>
+                <div class="card-body">
+                    {% if pending_captains %}
+                        <div class="list-group">
+                            {% for captain in pending_captains %}
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5 class="mb-1">{{ captain.full_name }}</h5>
+                                            <p class="mb-1">Roll: {{ captain.roll_number }}</p>
+                                            <p class="mb-1">Class: {{ captain.class_name }} - {{ captain.section }}</p>
+                                            {% if captain.id_card_image %}
+                                                <a href="{{ url_for('main.id_card_file', filename=captain.id_card_image) }}" 
+                                                   target="_blank" class="btn btn-sm btn-outline-primary">View ID Card</a>
+                                            {% endif %}
+                                        </div>
+                                        <div class="btn-group">
+                                            <form action="{{ url_for('admin.approve_user', user_id=captain.id) }}" method="POST" class="d-inline">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                <button type="submit" class="btn btn-success">Approve</button>
+                                            </form>
+                                            <form action="{{ url_for('admin.reject_user', user_id=captain.id) }}" method="POST" class="d-inline ms-2">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                <button type="submit" class="btn btn-danger">Reject</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No pending captain approvals</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4 class="mb-0">Pending Admin-Student Approvals</h4>
+                </div>
+                <div class="card-body">
+                    {% if pending_admin_students %}
+                        <div class="list-group">
+                            {% for admin_student in pending_admin_students %}
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5 class="mb-1">{{ admin_student.full_name }}</h5>
+                                            <p class="mb-1">Roll: {{ admin_student.roll_number }}</p>
+                                            <p class="mb-1">Class: {{ admin_student.class_name }} - {{ admin_student.section }}</p>
+                                            {% if admin_student.id_card_image %}
+                                                <a href="{{ url_for('main.id_card_file', filename=admin_student.id_card_image) }}" 
+                                                   target="_blank" class="btn btn-sm btn-outline-primary">View ID Card</a>
+                                            {% endif %}
+                                        </div>
+                                        <div class="btn-group">
+                                            <form action="{{ url_for('admin.approve_user', user_id=admin_student.id) }}" method="POST" class="d-inline">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                <button type="submit" class="btn btn-success">Approve</button>
+                                            </form>
+                                            <form action="{{ url_for('admin.reject_user', user_id=admin_student.id) }}" method="POST" class="d-inline ms-2">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                <button type="submit" class="btn btn-danger">Reject</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No pending admin-student approvals</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h4 class="mb-0">Manage Users</h4>
+        </div>
+        <div class="card-body">
+            <form action="{{ url_for('admin.search_users') }}" method="GET" class="mb-4">
+                <div class="row">
+                    <div class="col-md-3">
+                        <select name="class_name" class="form-select">
+                            <option value="">Select Class</option>
+                            <option value="XI">XI</option>
+                            <option value="XII">XII</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select name="section" class="form-select">
+                            <option value="">Select Section</option>
+                            <option value="Science-A">Science-A</option>
+                            <option value="Science-B">Science-B</option>
+                            <option value="Arts-A">Arts-A</option>
+                            <option value="Arts-B">Arts-B</option>
+                            <option value="Commerce-A">Commerce-A</option>
+                            <option value="Commerce-B">Commerce-B</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select name="role" class="form-select">
+                            <option value="">Select Role</option>
+                            <option value="student">Student</option>
+                            <option value="captain">Captain</option>
+                            <option value="admin-student">Admin Student</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary w-100">Search</button>
+                    </div>
+                </div>
+            </form>
+            
+            {% if users %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Roll</th>
+                                <th>Class</th>
+                                <th>Section</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                                <tr>
+                                    <td>{{ user.full_name }}</td>
+                                    <td>{{ user.roll_number }}</td>
+                                    <td>{{ user.class_name }}</td>
+                                    <td>{{ user.section }}</td>
+                                    <td>{{ user.role }}</td>
+                                    <td>
+                                        {% if user.is_approved %}
+                                            <span class="badge bg-success">Approved</span>
+                                        {% else %}
+                                            <span class="badge bg-warning">Pending</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if not user.is_approved %}
+                                            <form action="{{ url_for('admin.approve_user', user_id=user.id) }}" method="POST" class="d-inline">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                                            </form>
+                                        {% endif %}
+                                        <form action="{{ url_for('admin.reject_user', user_id=user.id) }}" method="POST" class="d-inline">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

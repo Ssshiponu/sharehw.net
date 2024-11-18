@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}{{ homework.title }} - ShareHW.net{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">{{ homework.title }}</h4>
+                <a href="{{ url_for('homework.list') }}" class="btn btn-outline-primary">Back to List</a>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5 class="text-muted">Subject</h5>
+                        <p>{{ homework.subject }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="text-muted">Teacher</h5>
+                        <p>{{ homework.teacher_name }}</p>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5 class="text-muted">Due Date</h5>
+                        <p>{{ homework.due_date.strftime('%B %d, %Y') }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="text-muted">Class & Section</h5>
+                        <p>{{ homework.class_name }}-{{ homework.section }}</p>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h5 class="text-muted">Description</h5>
+                    <p>{{ homework.description }}</p>
+                </div>
+
+                <div class="mb-4">
+                    <h5 class="text-muted">Homework File</h5>
+                    <a href="{{ url_for('homework.download', id=homework.id) }}" 
+                       class="btn btn-primary">
+                        <i class="bi bi-download"></i> Download File
+                    </a>
+                </div>
+
+                <div class="mb-4">
+                    <h5 class="text-muted">Upload Information</h5>
+                    <p>
+                        Uploaded by: {{ homework.uploader.full_name }} ({{ homework.uploader.role|title }})<br>
+                        Upload Date: {{ homework.created_at.strftime('%B %d, %Y %I:%M %p') }}
+                    </p>
+                </div>
+
+                {% if current_user.id == homework.uploaded_by or current_user.role == 'admin-student' %}
+                <div class="border-top pt-3">
+                    <h5 class="text-muted mb-3">Management Options</h5>
+                    <form action="{{ url_for('homework.delete', id=homework.id) }}" method="POST" class="d-inline">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-danger" 
+                                onclick="return confirm('Are you sure you want to delete this homework?')">
+                            Delete Homework
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

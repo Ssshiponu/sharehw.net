@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Homework - ShareHW.net{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Upload Homework</h4>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('homework.upload') }}" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    
+                    <div class="mb-3">
+                        <label for="subject" class="form-label">Subject</label>
+                        <select class="form-select" id="subject" name="subject" required>
+                            <option value="">Select Subject</option>
+                            {% for subject in subjects %}
+                                <option value="{{ subject }}">{{ subject }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="teacher_name" class="form-label">Teacher Name</label>
+                        <input type="text" class="form-control" id="teacher_name" name="teacher_name" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="attachment" class="form-label">Homework File</label>
+                        <input type="file" class="form-control" id="attachment" name="attachment" 
+                               accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required>
+                        <small class="text-muted">Accepted formats: PDF, Word, Images (Max size: 8MB)</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="due_date" class="form-label">Due Date</label>
+                        <input type="date" class="form-control" id="due_date" name="due_date" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Upload Homework</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
